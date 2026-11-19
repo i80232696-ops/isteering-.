@@ -1,0 +1,290 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>iSteering AMG</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:radial-gradient(ellipse at center,#263b50,#080d14 75%);
+ color:white;font-family:Arial;overflow:hidden;
+}
+header{
+ height:60px;background:#080d14;
+ border-bottom:1px solid #34495c;
+ display:flex;align-items:center;justify-content:space-around;
+}
+.logo{font-size:23px;font-weight:bold;font-style:italic}
+.logo span{color:#00aaff}
+.status{font-size:12px;color:#75efa8}
+main{
+ height:calc(100dvh - 60px);
+ display:grid;
+ grid-template-columns:1fr 2fr 1fr 120px;
+ gap:12px;padding:15px;
+ align-items:center;
+}
+.panel{
+ background:linear-gradient(145deg,#263544ee,#080e16);
+ border:1px solid #60778c66;
+ border-radius:17px;padding:14px;
+ box-shadow:0 15px 35px #0009;
+}
+h4{font-size:11px;letter-spacing:2px;color:#a8c8df}
+.center{text-align:center}
+#wheel{
+ width:min(42vw,400px);
+ aspect-ratio:1;
+ margin:auto;
+ touch-action:none;
+ transition:transform .035s linear;
+ filter:drop-shadow(0 15px 15px #000);
+}
+#wheel svg{width:100%;height:100%}
+.pedals{
+ display:flex;flex-direction:column;
+ gap:18px;align-items:center;
+}
+.pedal{
+ width:100%;height:190px;
+ border-radius:15px;
+ background:linear-gradient(145deg,#aebbc6,#263746 40%,#080d13);
+ border:2px solid #8296a7;
+ box-shadow:0 12px 22px #000b,inset 0 2px 5px #fff8;
+ display:flex;flex-direction:column;
+ align-items:center;justify-content:center;
+ touch-action:none;
+}
+.plate{
+ width:65%;height:115px;
+ border-radius:9px;
+ background:repeating-linear-gradient(135deg,#c1cbd2 0 3px,#526373 3px 8px);
+ border:2px solid #aab8c4;
+ box-shadow:inset 0 0 10px #0009;
+}
+.pedal strong{margin-top:12px;letter-spacing:3px}
+#gas:active{filter:brightness(1.4)}
+#brake:active{filter:brightness(1.4)}
+button{
+ background:#087fc4;color:white;
+ border:0;border-radius:9px;
+ padding:10px 14px;margin:5px;
+}
+input{
+ background:#172432;color:white;
+ border:1px solid #52677b;
+ padding:10px;width:100%;border-radius:8px;
+}
+small{color:#9db1c3}
+@media(max-width:700px){
+ main{
+  grid-template-columns:1fr 100px;
+  grid-template-rows:1fr;
+  padding:8px;gap:8px;
+ }
+ .left,.right{display:none}
+ .center{grid-column:1;grid-row:1}
+ #wheel{width:min(65vw,330px)}
+ .pedals{grid-column:2;grid-row:1}
+ .pedal{height:145px}
+ .plate{height:80px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo"><span>◆</span> iSteering</div>
+ <div class="status" id="status">● Bağlantı bekleniyor</div>
+ <b>AMG COCKPIT</b>
+</header>
+
+<main>
+
+ <section class="panel left">
+  <h4>SÜRÜŞ BİLGİSİ</h4>
+  <h1 id="speed">000</h1>
+  <small>KM/H</small>
+  <hr>
+  <h4>DİREKSİYON HASSASİYETİ</h4>
+  <input id="sensitivity" type="range" min="40" max="150" value="100">
+  <button onclick="centerWheel()">Merkezle</button>
+ </section>
+
+ <section class="center">
+  <h4>AMG SPORT STEERING</h4>
+  <div id="wheel">
+   <svg viewBox="0 0 500 500">
+    <defs>
+     <linearGradient id="leather" x2="1" y2="1">
+      <stop stop-color="#59616a"/>
+      <stop offset=".4" stop-color="#080b10"/>
+      <stop offset=".7" stop-color="#444b53"/>
+      <stop offset="1" stop-color="#050608"/>
+     </linearGradient>
+     <linearGradient id="metal" x2="0" y2="1">
+      <stop stop-color="#f2f6fa"/>
+      <stop offset=".5" stop-color="#657786"/>
+      <stop offset="1" stop-color="#d6e0e7"/>
+     </linearGradient>
+     <radialGradient id="hub">
+      <stop stop-color="#53616e"/>
+      <stop offset="1" stop-color="#080d14"/>
+     </radialGradient>
+    </defs>
+
+    <!-- Direksiyon deri çemberi -->
+    <circle cx="250" cy="250" r="195"
+     fill="none" stroke="#000" stroke-width="58"/>
+    <circle cx="250" cy="250" r="195"
+     fill="none" stroke="url(#leather)" stroke-width="43"/>
+    <circle cx="250" cy="250" r="195"
+     fill="none" stroke="#aab8c4" stroke-width="1.5"
+     stroke-dasharray="2 5"/>
+
+    <!-- Üç kollu metal yapı -->
+    <path d="M225 205 L175 245 L80 260 L90 295
+    L205 282 L230 320 L215 425
+    Q250 445 285 425 L270 320
+    L295 282 L410 295 L420 260
+    L325 245 L275 205Z"
+    fill="url(#metal)" stroke="#111820" stroke-width="7"/>
+
+    <!-- Orta göbek -->
+    <circle cx="250" cy="250" r="78"
+     fill="url(#hub)" stroke="url(#metal)" stroke-width="7"/>
+    <circle cx="250" cy="250" r="63"
+     fill="none" stroke="#8999a8" stroke-width="2"/>
+
+    <!-- Stilize amblem -->
+    <path d="M250 205 L238 255 L250 270 L262 255Z"
+     fill="#e4edf4"/>
+    <path d="M250 270 L222 295 L235 300 L250 284
+    L265 300 L278 295Z" fill="#b8c8d4"/>
+
+    <text x="250" y="325" text-anchor="middle"
+     fill="#d9e5ed" font-size="12" letter-spacing="3">
+     iSTEERING
+    </text>
+
+    <!-- Üst merkez işareti -->
+    <path d="M250 52 L250 78"
+     stroke="#d94750" stroke-width="9" stroke-linecap="round"/>
+   </svg>
+  </div>
+  <h4 id="angle">DİREKSİYON: 0°</h4>
+ </section>
+
+ <section class="panel right">
+  <h4>BAĞLANTI</h4>
+  <input id="address" placeholder="ws://192.168.1.25:8765/ws">
+  <button onclick="connectPC()">PC'YE BAĞLAN</button>
+  <h4>GAZ</h4><p id="gasValue">%0</p>
+  <h4>FREN</h4><p id="brakeValue">%0</p>
+ </section>
+
+ <section class="pedals">
+  <div class="pedal" id="brake">
+   <div class="plate"></div>
+   <strong>FREN</strong>
+  </div>
+  <div class="pedal" id="gas">
+   <div class="plate"></div>
+   <strong>GAZ</strong>
+  </div>
+ </section>
+
+</main>
+
+<script>
+let steering=0,gas=0,brake=0;
+let ws=null,drag=false,startX=0,startValue=0;
+
+const wheel=document.getElementById("wheel");
+
+function render(){
+ wheel.style.transform=`rotate(${steering*160}deg)`;
+ document.getElementById("angle").textContent=
+ "DİREKSİYON: "+Math.round(steering*450)+"°";
+ document.getElementById("gasValue").textContent=
+ "%"+Math.round(gas*100);
+ document.getElementById("brakeValue").textContent=
+ "%"+Math.round(brake*100);
+}
+
+wheel.addEventListener("pointerdown",e=>{
+ drag=true;startX=e.clientX;startValue=steering;
+ wheel.setPointerCapture(e.pointerId);
+});
+
+wheel.addEventListener("pointermove",e=>{
+ if(!drag)return;
+ let sensitivity=document.getElementById("sensitivity").value/100;
+ steering=Math.max(-1,Math.min(1,
+ startValue+(e.clientX-startX)/150*sensitivity));
+ render();send();
+});
+
+function release(){
+ drag=false;
+ steering=0;
+ render();send();
+}
+wheel.addEventListener("pointerup",release);
+wheel.addEventListener("pointercancel",release);
+
+function pedal(id,key){
+ const el=document.getElementById(id);
+ el.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  el.setPointerCapture(e.pointerId);
+  if(key==="gas")gas=1;else brake=1;
+  render();send();
+ });
+ function up(){
+  if(key==="gas")gas=0;else brake=0;
+  render();send();
+ }
+ el.addEventListener("pointerup",up);
+ el.addEventListener("pointercancel",up);
+ el.addEventListener("lostpointercapture",up);
+}
+pedal("gas","gas");
+pedal("brake","brake");
+
+function centerWheel(){
+ steering=0;render();send();
+}
+
+function connectPC(){
+ let url=document.getElementById("address").value.trim();
+ if(!url)return;
+ if(ws)ws.close();
+ ws=new WebSocket(url);
+ ws.onopen=()=>{
+  document.getElementById("status").textContent="● PC BAĞLI";
+ };
+ ws.onclose=()=>{
+  document.getElementById("status").textContent="● Bağlantı kesildi";
+ };
+ ws.onerror=()=>{
+  document.getElementById("status").textContent="● Bağlantı hatası";
+ };
+}
+
+function send(){
+ if(ws&&ws.readyState===1){
+  ws.send(JSON.stringify({
+   steering:steering,
+   throttle:gas,
+   brake:brake
+  }));
+ }
+}
+setInterval(send,50);
+render();
+</script>
+</body>
+</html>
